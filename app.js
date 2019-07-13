@@ -60,22 +60,18 @@ class TrainScheduleItem {
     calcNextArrival() {
         let now = moment();
         let firstTrain = moment(this.firstTrainTime, "HH:mm");
-        firstTrain.date(now.date());
 
-        if (firstTrain.hour() < now.hour()) {
-            firstTrain.add(1, "d");
+        if (firstTrain > now) {
+            this.nextArrival = firstTrain.format("hh:mm A");
+            this.minutesAway = firstTrain.diff(now, "minutes") + 1;
+        } else {
+            let timeDiffMins = Math.abs(now.diff(firstTrain, "minutes"));
+            let remainder = timeDiffMins % this.frequency;
+            let minutes = this.frequency - remainder;
+
+            this.minutesAway = minutes;
+            this.nextArrival = now.add(minutes, "minutes").format("hh:mm A");
         }
-
-        let timeDiffMins = Math.abs(now.diff(firstTrain, "minutes")) + 1;
-        console.log(timeDiffMins);
-
-        let minsPerDay = 60 * 24;
-        let days = Math.floor(this.frequency / minsPerDay);
-
-        this.minutesAway = days * minsPerDay + (timeDiffMins % this.frequency);
-        this.nextArrival = moment()
-            .add(this.minutesAway, "m")
-            .format("hh:mm A");
     }
 
     appendNewScheduleRow(tableBodyElmt) {
