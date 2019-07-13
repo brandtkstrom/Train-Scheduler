@@ -8,9 +8,12 @@ timepicker.on("change", evt => {
     evt.element.value = value;
 });
 
+const SCHEDULES = [];
+
 // Class for holding train schedule information
 class TrainScheduleItem {
-    constructor(name, dest, timeFirst, frequency) {
+    constructor(key, name, dest, timeFirst, frequency) {
+        this.key = key;
         this.name = name;
         this.destination = dest;
         this.firstTrainTime = timeFirst;
@@ -36,6 +39,7 @@ class TrainScheduleItem {
 
     appendNewScheduleRow(tableBodyElmt) {
         let row = document.createElement("tr");
+        row.setAttribute("id", this.key);
 
         let tdName = document.createElement("td");
         tdName.innerText = this.name;
@@ -45,8 +49,10 @@ class TrainScheduleItem {
         tdFreq.innerText = this.frequency;
         let tdNextArrival = document.createElement("td");
         tdNextArrival.innerText = this.nextArrival;
+        tdNextArrival.className = "next-arrival";
         let tdMinsAway = document.createElement("td");
         tdMinsAway.innerText = this.minutesAway;
+        tdMinsAway.className = "mins-away";
 
         row.append(tdName, tdDest, tdFreq, tdNextArrival, tdMinsAway);
 
@@ -62,12 +68,15 @@ document.addEventListener("DOMContentLoaded", evt => {
     DB.on("child_added", data => {
         let record = data.val();
         let schedItem = new TrainScheduleItem(
+            data.key,
             record.name,
             record.destination,
             record.firstTrain,
             record.frequency
         );
         schedItem.appendNewScheduleRow(TABLE_BODY);
+
+        SCHEDULES.push(schedItem);
     });
 
     // Attach event listener to submit button
@@ -99,4 +108,30 @@ document.addEventListener("DOMContentLoaded", evt => {
             frequency: freq
         });
     });
+
+    // Update arrival and wait times every minutes
+    setInterval(function() {
+        SCHEDULES.forEach(schedule => {
+            // Get table row for shedule
+            let row = document.querySelector(`#${schedule.key}`);
+            if (!row) {
+                return;
+            }
+
+            // If found, recalc arrival times
+            schedule.calcNextArrival();
+
+            // Get next arrival table data element
+            let tdNextArrival = row.querySelector("td.next-arrival");
+            if (tdNextArrival) {
+                tdNextArrival.innerText = schedule.nextArrival;
+            }
+
+            // Get minutes away table data element
+            let tdMinsAway = row.querySelector("td.mins-away");
+            if (tdMinsAway) {
+                tdMinsAway.innerText = schedule.minutesAway;
+            }
+        });
+    }, 1000 * 60);
 });
