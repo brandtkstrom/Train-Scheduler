@@ -8,6 +8,7 @@
         <title>Train Scheduler</title>
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
         <script src="https://momentjs.com/downloads/moment.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/6.3.0/firebase.js"></script>
     </head>
 
     <body>
@@ -31,26 +32,35 @@
             <div class="row">
                 <div class="col-xl-12">
 
-                    <table class="table">
-                        <thead>
-                            <tr>
-                                <th>Train Name</th>
-                                <th>Destination</th>
-                                <th>Frequency (min)</th>
-                                <th>Next Arrival</th>
-                                <th>Minutes Away</th>
-                            </tr>
-                        </thead>
-                        <tbody id="train-table-body">
-                            <!-- todo -->
-                        </tbody>
-                    </table>
+                    <div class="card">
+                        <div class="card-header">
+                            Current Train Schedule
+                        </div>
+                        <div class="card-body">
+
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Train Name</th>
+                                        <th>Destination</th>
+                                        <th>Frequency (min)</th>
+                                        <th>Next Arrival</th>
+                                        <th>Minutes Away</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="train-table-body">
+                                    <!-- todo -->
+                                </tbody>
+                            </table>
+
+                        </div>
+                    </div>
 
                 </div>
             </div>
 
             <!-- Add Train Form Row -->
-            <div class="row">
+            <div class="row mt-3">
                 <div class="col-xl-12">
 
                     <div class="card">
