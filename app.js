@@ -4,8 +4,6 @@ const timepicker = new TimePicker(["input-train-time"], {
     lang: "en"
 });
 timepicker.on("change", evt => {
-    console.log(evt);
-
     let value = `${evt.hour || "00"}:${evt.minute || "00"}`;
     evt.element.value = value;
 });
@@ -23,11 +21,36 @@ class TrainScheduleItem {
     }
 
     calcNextArrival() {
-        // TODO
+        let now = moment();
+        let firstTrain = moment(this.firstTrainTime, "HH:mm");
+        let timeDiffMins = Math.abs(now.diff(firstTrain, "minutes")) + 1;
+
+        let minsPerDay = 60 * 24;
+        let days = Math.floor(this.frequency / minsPerDay);
+
+        this.minutesAway = days * minsPerDay + (timeDiffMins % this.frequency);
+        this.nextArrival = moment()
+            .add(this.minutesAway, "m")
+            .format("hh:mm A");
     }
 
     appendNewScheduleRow(tableBodyElmt) {
-        // TODO
+        let row = document.createElement("tr");
+
+        let tdName = document.createElement("td");
+        tdName.innerText = this.name;
+        let tdDest = document.createElement("td");
+        tdDest.innerText = this.destination;
+        let tdFreq = document.createElement("td");
+        tdFreq.innerText = this.frequency;
+        let tdNextArrival = document.createElement("td");
+        tdNextArrival.innerText = this.nextArrival;
+        let tdMinsAway = document.createElement("td");
+        tdMinsAway.innerText = this.minutesAway;
+
+        row.append(tdName, tdDest, tdFreq, tdNextArrival, tdMinsAway);
+
+        tableBodyElmt.append(row);
     }
 }
 
@@ -50,8 +73,14 @@ document.addEventListener("DOMContentLoaded", evt => {
     // Attach event listener to submit button
     document.querySelector("#add-button").addEventListener("click", evt => {
         // Get input values
-        let name = document.querySelector("#input-train-name").value.trim();
-        let dest = document.querySelector("#input-train-dest").value.trim();
+        let name = document
+            .querySelector("#input-train-name")
+            .value.trim()
+            .toLowerCase();
+        let dest = document
+            .querySelector("#input-train-dest")
+            .value.trim()
+            .toLowerCase();
         let time = document.querySelector("#input-train-time").value.trim();
         let freq = parseInt(document.querySelector("#input-train-freq").value);
 

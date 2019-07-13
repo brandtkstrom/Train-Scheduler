@@ -17,19 +17,23 @@
             ._jw-tpk-container {
                 height: auto;
             }
+
+            td {
+                text-transform: capitalize;
+            }
         </style>
     </head>
 
-    <body>
+    <body class="bg-dark">
 
         <!-- Grid Container -->
         <div class="container">
 
             <!-- Jumbotron Header Row -->
-            <div class="row">
+            <div class="row mt-4">
                 <div class="col-xl-12">
                     <header>
-                        <div class="jumbotron text-center">
+                        <div class="jumbotron text-center bg-info text-light border border-light rounded">
                             <h1 class="display-4 font-weight-bold">Anytime is Train Time</h1>
                             <p class="lead font-weight-bold">Choo Choo. Chee Chee.</p>
                         </div>
@@ -38,16 +42,16 @@
             </div>
 
             <!-- Current Train Schedule Row -->
-            <div class="row">
+            <div class="row mb-4">
                 <div class="col-xl-12">
 
-                    <div class="card">
-                        <div class="card-header">
-                            Current Train Schedule
+                    <div class="card border border-light rounded">
+                        <div class="card-header bg-info text-light text-center font-weight-bold">
+                            <h4>Current Train Schedule</h4>
                         </div>
-                        <div class="card-body">
+                        <div class="card-body bg-dark">
 
-                            <table class="table">
+                            <table class="table table-dark">
                                 <thead>
                                     <tr>
                                         <th>Train Name</th>
@@ -69,14 +73,14 @@
             </div>
 
             <!-- Add Train Form Row -->
-            <div class="row mt-3">
+            <div class="row">
                 <div class="col-xl-12">
 
-                    <div class="card">
-                        <div class="card-header">
-                            Add Train
+                    <div class="card border border-light rounded">
+                        <div class="card-header bg-info text-light text-center font-weight-bold">
+                            <h4>Add Train</h4>
                         </div>
-                        <div class="card-body">
+                        <div class="card-body bg-dark text-light">
 
                             <form>
                                 <div class="form-group">
@@ -97,11 +101,11 @@
 
                                 <div class="form-group">
                                     <label for="input-train-freq">Frequency (min)</label>
-                                    <input type="number" min="0" max="1440" class="form-control" id="input-train-freq"
+                                    <input type="number" min="0" class="form-control" id="input-train-freq"
                                         placeholder="30">
                                 </div>
 
-                                <button type="submit" id="add-button" class="btn btn-primary">Submit</button>
+                                <button type="submit" id="add-button" class="btn btn-info">Submit</button>
 
                             </form>
 
