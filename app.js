@@ -90,8 +90,17 @@ class TrainScheduleItem {
         let tdMinsAway = document.createElement("td");
         tdMinsAway.innerText = this.minutesAway;
         tdMinsAway.className = "mins-away";
+        let tdDelete = document.createElement("td");
 
-        row.append(tdName, tdDest, tdFreq, tdNextArrival, tdMinsAway);
+        let icon = document.createElement("i");
+        icon.setAttribute("id", this.key);
+        icon.className = "fas fa-minus-circle";
+        icon.addEventListener("click", function() {
+            DB.RemoveSchedule(this.id);
+        });
+        tdDelete.append(icon);
+
+        row.append(tdName, tdDest, tdFreq, tdNextArrival, tdMinsAway, tdDelete);
 
         tableBodyElmt.append(row);
     }
@@ -119,6 +128,18 @@ document.addEventListener("DOMContentLoaded", evt => {
         SCHEDULES.push(schedItem);
     });
 
+    // Handle schedule deletes
+    DB.on("child_removed", data => {
+        let removeIdx = SCHEDULES.findIndex(s => s.key === data.key);
+        if (removeIdx >= 0) {
+            SCHEDULES.splice(removeIdx, 1);
+            let row = document.querySelector(`#${data.key}`);
+            if (row) {
+                row.remove();
+            }
+        }
+    });
+
     // Attach event listener to submit button
     document.querySelector("#add-button").addEventListener("click", evt => {
         // Get input values
@@ -141,12 +162,7 @@ document.addEventListener("DOMContentLoaded", evt => {
         }
 
         // Add new train schedule entry to Firebase DB
-        DB.push().set({
-            name: name,
-            destination: dest,
-            firstTrain: time,
-            frequency: freq
-        });
+        DB.AddSchedule(name, dest, time, freq);
     });
 
     // Update current time every second

@@ -11,11 +11,16 @@
         <script src="//cdn.jsdelivr.net/timepicker.js/latest/timepicker.min.js"></script>
         <script src="https://momentjs.com/downloads/moment.js"></script>
         <script src="https://www.gstatic.com/firebasejs/6.3.0/firebase.js"></script>
+        <script src="https://kit.fontawesome.com/622bde9dfc.js"></script>
 
         <!-- style override -->
         <style>
             ._jw-tpk-container {
                 height: auto;
+            }
+
+            .fas:hover {
+                color: red;
             }
 
             td {
@@ -73,6 +78,7 @@
                                         <th>Frequency (min)</th>
                                         <th>Next Arrival</th>
                                         <th>Minutes Away</th>
+                                        <th></th>
                                     </tr>
                                 </thead>
                                 <tbody id="train-table-body">
@@ -110,7 +116,7 @@
                                 <div class="form-group">
                                     <label for="input-train-time">First Train Time (HH:mm - military time)</label>
                                     <input type="text" class="form-control" id="input-train-time" maxlength="5" size="5"
-                                        placeholder="12:00">
+                                        placeholder="00:00">
                                 </div>
 
                                 <div class="form-group">

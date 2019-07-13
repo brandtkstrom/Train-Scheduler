@@ -13,3 +13,19 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 
 const DB = firebase.database().ref("schedule");
+
+DB.RemoveSchedule = function(id) {
+    firebase
+        .database()
+        .ref("schedule/" + id)
+        .remove();
+};
+
+DB.AddSchedule = function(name, dest, time, freq) {
+    DB.push().set({
+        name: name,
+        destination: dest,
+        firstTrain: time,
+        frequency: freq
+    });
+};
