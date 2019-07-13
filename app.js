@@ -1,3 +1,6 @@
+// Stores current train schedule items
+const SCHEDULES = [];
+
 // Time picker for 'First Train Time' input
 const timepicker = new TimePicker(["input-train-time"], {
     theme: "dark",
@@ -8,7 +11,38 @@ timepicker.on("change", evt => {
     evt.element.value = value;
 });
 
-const SCHEDULES = [];
+// Updates the current time displayed
+function updateCurrentTime() {
+    let now = moment();
+    let time = now.format("dddd, MMM. Do YYYY, h:mm:ss A");
+    document.querySelector("#current-time").innerText = time;
+
+    // Every minute, update arrival times
+    if (now.second() === 0) {
+        SCHEDULES.forEach(schedule => {
+            // Get table row for shedule
+            let row = document.querySelector(`#${schedule.key}`);
+            if (!row) {
+                return;
+            }
+
+            // If found, recalc arrival times
+            schedule.calcNextArrival();
+
+            // Get next arrival table data element
+            let tdNextArrival = row.querySelector("td.next-arrival");
+            if (tdNextArrival) {
+                tdNextArrival.innerText = schedule.nextArrival;
+            }
+
+            // Get minutes away table data element
+            let tdMinsAway = row.querySelector("td.mins-away");
+            if (tdMinsAway) {
+                tdMinsAway.innerText = schedule.minutesAway;
+            }
+        });
+    }
+}
 
 // Class for holding train schedule information
 class TrainScheduleItem {
@@ -26,7 +60,14 @@ class TrainScheduleItem {
     calcNextArrival() {
         let now = moment();
         let firstTrain = moment(this.firstTrainTime, "HH:mm");
+        firstTrain.date(now.date());
+
+        if (firstTrain.hour() < now.hour()) {
+            firstTrain.add(1, "d");
+        }
+
         let timeDiffMins = Math.abs(now.diff(firstTrain, "minutes")) + 1;
+        console.log(timeDiffMins);
 
         let minsPerDay = 60 * 24;
         let days = Math.floor(this.frequency / minsPerDay);
@@ -61,6 +102,9 @@ class TrainScheduleItem {
 }
 
 document.addEventListener("DOMContentLoaded", evt => {
+    // Set current time
+    updateCurrentTime();
+
     // Create reference to train schedule table body element
     const TABLE_BODY = document.querySelector("#train-table-body");
 
@@ -109,29 +153,6 @@ document.addEventListener("DOMContentLoaded", evt => {
         });
     });
 
-    // Update arrival and wait times every minutes
-    setInterval(function() {
-        SCHEDULES.forEach(schedule => {
-            // Get table row for shedule
-            let row = document.querySelector(`#${schedule.key}`);
-            if (!row) {
-                return;
-            }
-
-            // If found, recalc arrival times
-            schedule.calcNextArrival();
-
-            // Get next arrival table data element
-            let tdNextArrival = row.querySelector("td.next-arrival");
-            if (tdNextArrival) {
-                tdNextArrival.innerText = schedule.nextArrival;
-            }
-
-            // Get minutes away table data element
-            let tdMinsAway = row.querySelector("td.mins-away");
-            if (tdMinsAway) {
-                tdMinsAway.innerText = schedule.minutesAway;
-            }
-        });
-    }, 1000 * 60);
+    // Update current time every second
+    setInterval(updateCurrentTime, 1000);
 });
